@@ -8,10 +8,10 @@ using UnityEngine.SceneManagement;
 public class NetworkManagerCustom : NetworkManager
 {
     [SerializeField] private int minPlayers = 2;
-    [Scene][SerializeField] private string menuScene = string.Empty;
+    [Scene][SerializeField] private string lobbyScene = string.Empty; // must use ActiveScene().path
 
-    [Header("Maps")]
-    [SerializeField] private int numberOfRounds = 1;
+    //[Header("Maps")]
+    //[SerializeField] private int numberOfRounds = 1;
     //[SerializeField] private MapSet mapSet = null;
 
     [Header("Room")]
@@ -19,14 +19,14 @@ public class NetworkManagerCustom : NetworkManager
 
     [Header("Game")]
     [SerializeField] private NetworkGamePlayer gamePlayerPrefab = null;
-    [SerializeField] private GameObject playerSpawnSystem = null;
-    [SerializeField] private GameObject roundSystem = null;
+    //[SerializeField] private GameObject playerSpawnSystem = null;
+    //[SerializeField] private GameObject roundSystem = null;
 
     //private MapHandler mapHandler;
 
     public static event Action OnClientConnected;
     public static event Action OnClientDisconnected;
-    public static event Action<NetworkConnection> OnServerReadied;
+    public static event Action<NetworkConnectionToClient> OnServerReadied;
     public static event Action OnServerStopped;
 
     public List<NetworkRoomPlayer> RoomPlayers { get; } = new List<NetworkRoomPlayer>();
@@ -66,7 +66,7 @@ public class NetworkManagerCustom : NetworkManager
             return;
         }
 
-        if (SceneManager.GetActiveScene().name != menuScene) //stops players joining while in-game
+        if (SceneManager.GetActiveScene().path != lobbyScene) //stops players joining while in-game
         {
             conn.Disconnect();
             return;
@@ -75,9 +75,13 @@ public class NetworkManagerCustom : NetworkManager
 
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
     {
-        if (SceneManager.GetActiveScene().name == menuScene)
+        if (SceneManager.GetActiveScene().path == lobbyScene)
         {
-            bool isLeader = RoomPlayers.Count == 0;
+            bool isLeader = false;
+            if (RoomPlayers.Count == 0)
+            {
+                isLeader = true;
+            }
 
             NetworkRoomPlayer roomPlayerInstance = Instantiate(roomPlayerPrefab);
 
@@ -131,20 +135,27 @@ public class NetworkManagerCustom : NetworkManager
 
     public void StartGame()
     {
-        if (SceneManager.GetActiveScene().name == menuScene)
+        Debug.Log("Starting game // change scene");
+        foreach (var player in RoomPlayers)
         {
-            if (!IsReadyToStart()) { return; }
+            Debug.Log(player.DisplayName + " has joined");
 
-            //mapHandler = new MapHandler(mapSet, numberOfRounds);
-
-            //ServerChangeScene(mapHandler.NextMap);
         }
+        
+        //if (SceneManager.GetActiveScene().name == lobbyScene)
+        //{
+        //    if (!IsReadyToStart()) { return; }
+        //
+        //    //mapHandler = new MapHandler(mapSet, numberOfRounds);
+        //
+        //    //ServerChangeScene(mapHandler.NextMap);
+        //}
     }
 
     public override void ServerChangeScene(string newSceneName)
     {
         // From menu to game
-        if (SceneManager.GetActiveScene().name == menuScene && newSceneName.StartsWith("Scene_Map"))
+        if (SceneManager.GetActiveScene().path == lobbyScene && newSceneName.StartsWith("Scene_Map"))
         {
             for (int i = RoomPlayers.Count - 1; i >= 0; i--)
             {

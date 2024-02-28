@@ -6,10 +6,10 @@ using UnityEngine.UI;
 public class NetworkRoomPlayer : NetworkBehaviour
 {
     [Header("UI")]
-    [SerializeField] private GameObject lobbyUI = null;
+    [SerializeField] private GameObject lobbyUI = null; // on only if belongs to localPlayer
     [SerializeField] private TMP_Text[] playerNameTexts = new TMP_Text[4];
     [SerializeField] private TMP_Text[] playerReadyTexts = new TMP_Text[4];
-    [SerializeField] private Button startGameButton = null;
+    [SerializeField] private Button startGameButton = null; // on only if Host
 
     [SyncVar(hook = nameof(HandleDisplayNameChanged))]
     public string DisplayName = "Loading...";
@@ -32,11 +32,11 @@ public class NetworkRoomPlayer : NetworkBehaviour
         get
         {
             if (room != null) { return room; }
-            return room = NetworkManager.singleton as NetworkManagerCustom;
+            return room = NetworkManager.singleton as NetworkManagerCustom; // casting our netManager
         }
     }
 
-    public override void OnStartAuthority()
+    public override void OnStartAuthority() // called on object that belongs to localPlayer
     {
         CmdSetDisplayName(PlayerNameInput.DisplayName);
 
@@ -60,7 +60,7 @@ public class NetworkRoomPlayer : NetworkBehaviour
     public void HandleReadyStatusChanged(bool oldValue, bool newValue) => UpdateDisplay();
     public void HandleDisplayNameChanged(string oldValue, string newValue) => UpdateDisplay();
 
-    private void UpdateDisplay()
+    private void UpdateDisplay() // updates UI
     {
         if (!isOwned)
         {

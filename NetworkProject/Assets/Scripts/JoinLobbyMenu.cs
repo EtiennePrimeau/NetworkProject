@@ -15,6 +15,7 @@ public class JoinLobbyMenu : MonoBehaviour
     {
         NetworkManagerCustom.OnClientConnected += HandleClientConnected;
         NetworkManagerCustom.OnClientDisconnected += HandleClientDisconnected;
+        ipAddressInputField.text = networkManager.networkAddress;
     }
 
     private void OnDisable()

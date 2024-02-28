@@ -1532,10 +1532,12 @@ MonoBehaviour:
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
   authenticator: {fileID: 0}
-  playerPrefab: {fileID: 4715945675457560763, guid: 32ad89e75d824ab488a440acd88b0600, type: 3}
+  playerPrefab: {fileID: 4196902234963448818, guid: 334c0752682bcf041a6c6169f455356c, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 4715945675457560763, guid: 32ad89e75d824ab488a440acd88b0600, type: 3}
+  - {fileID: 1402751531383785354, guid: 9bb5a6b3e42b3a34d9425db31507d849, type: 3}
   snapshotSettings:
     bufferTimeMultiplier: 2
     bufferLimit: 32
@@ -1550,12 +1552,9 @@ MonoBehaviour:
   connectionQualityInterval: 3
   timeInterpolationGui: 0
   minPlayers: 2
-  menuScene: 
-  numberOfRounds: 1
-  roomPlayerPrefab: {fileID: 0}
-  gamePlayerPrefab: {fileID: 0}
-  playerSpawnSystem: {fileID: 0}
-  roundSystem: {fileID: 0}
+  lobbyScene: Assets/Scenes/LobbyScene.unity
+  roomPlayerPrefab: {fileID: 6205867618914317247, guid: 32ad89e75d824ab488a440acd88b0600, type: 3}
+  gamePlayerPrefab: {fileID: -8810439575308168324, guid: 9bb5a6b3e42b3a34d9425db31507d849, type: 3}
 --- !u!114 &862775109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3173,7 +3172,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1847369777}
   m_OnClick:
     m_PersistentCalls:
