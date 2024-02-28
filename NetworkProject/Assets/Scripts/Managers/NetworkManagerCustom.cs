@@ -5,17 +5,32 @@ using System.Linq;
 using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
+public enum EPlayerType
+{
+    Runner,
+    Shooter
+}
+
 public class NetworkManagerCustom : NetworkManager
 {
-    [SerializeField] private int minPlayers = 2;
-    [Scene][SerializeField] private string lobbyScene = string.Empty; // must use ActiveScene().path
 
-    //[Header("Maps")]
-    //[SerializeField] private int numberOfRounds = 1;
-    //[SerializeField] private MapSet mapSet = null;
+    private static NetworkManagerCustom instance;
+    public static NetworkManagerCustom Instance
+    {
+        get
+        {
+            if (instance != null) { return instance; }
+            return instance = NetworkManager.singleton as NetworkManagerCustom;
+        }
+    }
+    [SerializeField] public Identifier Identifier { get; private set; }
+    [SerializeField] public NetworkMatchManager MatchManager { get; private set; }
 
-    [Header("Room")]
+    [Header("Lobby")]
     [SerializeField] private NetworkRoomPlayer roomPlayerPrefab = null;
+    [Scene][SerializeField] private string lobbyScene = string.Empty; // must use ActiveScene().path
+    [SerializeField] private int minPlayers = 2;
 
     [Header("Game")]
     [SerializeField] private NetworkGamePlayer gamePlayerPrefab = null;
@@ -138,7 +153,7 @@ public class NetworkManagerCustom : NetworkManager
         Debug.Log("Starting game // change scene");
         foreach (var player in RoomPlayers)
         {
-            Debug.Log(player.DisplayName + " has joined");
+            Debug.Log(player.DisplayName + " has joined in team " + player.PlayerType);
 
         }
         
@@ -162,6 +177,7 @@ public class NetworkManagerCustom : NetworkManager
                 var conn = RoomPlayers[i].connectionToClient;
                 var gameplayerInstance = Instantiate(gamePlayerPrefab);
                 gameplayerInstance.SetDisplayName(RoomPlayers[i].DisplayName);
+                gameplayerInstance.SetPlayerType(RoomPlayers[i].PlayerType);
 
                 NetworkServer.Destroy(conn.identity.gameObject);
 
@@ -170,6 +186,15 @@ public class NetworkManagerCustom : NetworkManager
         }
 
         base.ServerChangeScene(newSceneName);
+
+        Debug.Log(SceneManager.GetActiveScene().name + " // with game players : ");
+        Debug.Log("GamePlayers count : " + GamePlayers.Count);
+        foreach (var player in GamePlayers)
+        {
+            Debug.Log(player.GetDisplayName() + " has transferred to level in team " + player.GetPlayerType());
+
+        }
+
     }
 
     public override void OnServerSceneChanged(string sceneName)

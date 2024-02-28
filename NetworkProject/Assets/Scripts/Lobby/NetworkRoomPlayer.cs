@@ -8,13 +8,17 @@ public class NetworkRoomPlayer : NetworkBehaviour
     [Header("UI")]
     [SerializeField] private GameObject lobbyUI = null; // on only if belongs to localPlayer
     [SerializeField] private TMP_Text[] playerNameTexts = new TMP_Text[4];
+    [SerializeField] private TMP_Text[] playerTeamSelectionTexts = new TMP_Text[4];
     [SerializeField] private TMP_Text[] playerReadyTexts = new TMP_Text[4];
     [SerializeField] private Button startGameButton = null; // on only if Host
+    [SerializeField] private Button m_changeTeamButton = null; // interactable only if not ready
 
     [SyncVar(hook = nameof(HandleDisplayNameChanged))]
     public string DisplayName = "Loading...";
     [SyncVar(hook = nameof(HandleReadyStatusChanged))]
     public bool IsReady = false;
+    [SyncVar(hook = nameof(HandleTeamSelectionChanged))]
+    public EPlayerType PlayerType;
 
     private bool isLeader;
     public bool IsLeader
@@ -59,6 +63,7 @@ public class NetworkRoomPlayer : NetworkBehaviour
 
     public void HandleReadyStatusChanged(bool oldValue, bool newValue) => UpdateDisplay();
     public void HandleDisplayNameChanged(string oldValue, string newValue) => UpdateDisplay();
+    public void HandleTeamSelectionChanged(EPlayerType oldValue, EPlayerType newValue) => UpdateDisplay();
 
     private void UpdateDisplay() // updates UI
     {
@@ -79,12 +84,14 @@ public class NetworkRoomPlayer : NetworkBehaviour
         for (int i = 0; i < playerNameTexts.Length; i++)
         {
             playerNameTexts[i].text = "Waiting For Player...";
+            playerTeamSelectionTexts[i].text = string.Empty;
             playerReadyTexts[i].text = string.Empty;
         }
 
         for (int i = 0; i < Room.RoomPlayers.Count; i++)
         {
             playerNameTexts[i].text = Room.RoomPlayers[i].DisplayName;
+            playerTeamSelectionTexts[i].text = Room.RoomPlayers[i].PlayerType.ToString();
             playerReadyTexts[i].text = Room.RoomPlayers[i].IsReady ?
                 "<color=green>Ready</color>" :
                 "<color=red>Not Ready</color>";
@@ -109,7 +116,26 @@ public class NetworkRoomPlayer : NetworkBehaviour
     {
         IsReady = !IsReady;
 
+        m_changeTeamButton.interactable = !IsReady; // only works on host (new function not command?)
+
         Room.NotifyPlayersOfReadyState();
+    }
+
+    [Command]
+    public void CmdSwitchTeam()
+    {
+        //needs to check if available spot
+        
+        if (PlayerType == EPlayerType.Runner)
+        {
+            PlayerType = EPlayerType.Shooter;
+        }
+        else if (PlayerType == EPlayerType.Shooter) // in case we add more player types
+        {
+            PlayerType = EPlayerType.Runner;
+        }
+
+        //Room.NotifyPlayersOfReadyState();
     }
 
     [Command]
