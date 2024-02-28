@@ -142,20 +142,20 @@ public class NetworkManagerCustom : NetworkManager
 
         }
         
-        //if (SceneManager.GetActiveScene().name == lobbyScene)
-        //{
-        //    if (!IsReadyToStart()) { return; }
-        //
-        //    //mapHandler = new MapHandler(mapSet, numberOfRounds);
-        //
-        //    //ServerChangeScene(mapHandler.NextMap);
-        //}
+        if (SceneManager.GetActiveScene().path == lobbyScene)
+        {
+            if (!IsReadyToStart()) { return; }
+        
+            //mapHandler = new MapHandler(mapSet, numberOfRounds);
+        
+            ServerChangeScene("Level_01");
+        }
     }
 
     public override void ServerChangeScene(string newSceneName)
     {
         // From menu to game
-        if (SceneManager.GetActiveScene().path == lobbyScene && newSceneName.StartsWith("Scene_Map"))
+        if (SceneManager.GetActiveScene().path == lobbyScene && newSceneName.StartsWith("Level"))
         {
             for (int i = RoomPlayers.Count - 1; i >= 0; i--)
             {
