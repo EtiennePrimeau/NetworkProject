@@ -19,7 +19,7 @@ public class Identifier : MonoBehaviour
     {
         Object obj = new Object(ReceiveID(), root.gameObject);
         m_objectsList.Add(obj);
-        Debug.Log(obj.gameObject.name + "   " + obj.uniqueID);
+        //Debug.Log(obj.gameObject.name + "   " + obj.uniqueID);
 
     }
 
@@ -35,7 +35,7 @@ public class Identifier : MonoBehaviour
             
             Object obj = new Object(ReceiveID(), child.gameObject);
             m_objectsList.Add(obj);
-            //Debug.Log(obj.gameObject.name + "   " + obj.uniqueID);
+            Debug.Log(obj.gameObject.name + "   " + obj.uniqueID);
 
             if (child.childCount != 0)
             {

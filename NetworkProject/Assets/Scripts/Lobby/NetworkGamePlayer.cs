@@ -21,11 +21,9 @@ public class NetworkGamePlayer : NetworkBehaviour
 
     public override void OnStartClient()
     {
-        Debug.Log("Start"); // called on every instance (normal?)
-
         DontDestroyOnLoad(gameObject);
 
-        Room.GamePlayers.Add(this); // doesn't add to the list (maybe to client?) //maybe do a CMD ?
+        Room.GamePlayers.Add(this);
     }
 
     public override void OnStopClient()

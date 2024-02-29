@@ -24,8 +24,9 @@ public class NetworkManagerCustom : NetworkManager
             return instance = NetworkManager.singleton as NetworkManagerCustom;
         }
     }
-    [SerializeField] public Identifier Identifier { get; private set; }
-    [SerializeField] public NetworkMatchManager MatchManager { get; private set; }
+    [field:SerializeField] public Identifier Identifier { get; private set; }
+    [field:SerializeField] public NetworkMatchManager MatchManager { get; private set; }
+    [field:SerializeField] public NetworkSpawner Spawner { get; private set; }
 
     [Header("Lobby")]
     [SerializeField] private NetworkRoomPlayer roomPlayerPrefab = null;
@@ -34,8 +35,11 @@ public class NetworkManagerCustom : NetworkManager
 
     [Header("Game")]
     [SerializeField] private NetworkGamePlayer gamePlayerPrefab = null;
+    [SerializeField] private GameObject m_runnerPrefab;
+    [SerializeField] private GameObject m_shooterPrefab;
     //[SerializeField] private GameObject playerSpawnSystem = null;
     //[SerializeField] private GameObject roundSystem = null;
+    [SerializeField] private GameObject m_mapPrefab;
 
     //private MapHandler mapHandler;
 
@@ -150,12 +154,12 @@ public class NetworkManagerCustom : NetworkManager
 
     public void StartGame()
     {
-        Debug.Log("Starting game // change scene");
-        foreach (var player in RoomPlayers)
-        {
-            Debug.Log(player.DisplayName + " has joined in team " + player.PlayerType);
-
-        }
+        //Debug.Log("Starting game // change scene");
+        //foreach (var player in RoomPlayers)
+        //{
+        //    Debug.Log(player.DisplayName + " has joined in team " + player.PlayerType);
+        //
+        //}
         
         if (SceneManager.GetActiveScene().path == lobbyScene)
         {
@@ -172,41 +176,59 @@ public class NetworkManagerCustom : NetworkManager
         // From menu to game
         if (SceneManager.GetActiveScene().path == lobbyScene && newSceneName.StartsWith("Level"))
         {
+            //for (int i = RoomPlayers.Count - 1; i >= 0; i--)
+            //{
+            //    var conn = RoomPlayers[i].connectionToClient;
+            //    var gameplayerInstance = Instantiate(gamePlayerPrefab);
+            //    gameplayerInstance.SetDisplayName(RoomPlayers[i].DisplayName);
+            //    gameplayerInstance.SetPlayerType(RoomPlayers[i].PlayerType);
+            //
+            //    NetworkServer.Destroy(conn.identity.gameObject);
+            //
+            //    NetworkServer.ReplacePlayerForConnection(conn, gameplayerInstance.gameObject);
+            //}
             for (int i = RoomPlayers.Count - 1; i >= 0; i--)
             {
-                var conn = RoomPlayers[i].connectionToClient;
-                var gameplayerInstance = Instantiate(gamePlayerPrefab);
-                gameplayerInstance.SetDisplayName(RoomPlayers[i].DisplayName);
-                gameplayerInstance.SetPlayerType(RoomPlayers[i].PlayerType);
+                GameObject playerInstance;
+                if (RoomPlayers[i].PlayerType == EPlayerType.Runner)
+                {
+                    playerInstance = Instantiate(m_runnerPrefab);
+                }
+                else
+                {
+                    playerInstance = Instantiate(m_shooterPrefab);
+                }
 
+                NetworkGamePlayer playerInfos = playerInstance.GetComponent<NetworkGamePlayer>();
+                playerInfos.SetDisplayName(RoomPlayers[i].DisplayName);
+                playerInfos.SetPlayerType(RoomPlayers[i].PlayerType);
+
+                var conn = RoomPlayers[i].connectionToClient;
                 NetworkServer.Destroy(conn.identity.gameObject);
 
-                NetworkServer.ReplacePlayerForConnection(conn, gameplayerInstance.gameObject);
+                NetworkServer.ReplacePlayerForConnection(conn, playerInstance);
             }
         }
 
         base.ServerChangeScene(newSceneName);
 
-        Debug.Log(SceneManager.GetActiveScene().name + " // with game players : ");
-        Debug.Log("GamePlayers count : " + GamePlayers.Count);
-        foreach (var player in GamePlayers)
-        {
-            Debug.Log(player.GetDisplayName() + " has transferred to level in team " + player.GetPlayerType());
-
-        }
 
     }
 
     public override void OnServerSceneChanged(string sceneName)
     {
-        //if (sceneName.StartsWith("Scene_Map"))
-        //{
-        //    GameObject playerSpawnSystemInstance = Instantiate(playerSpawnSystem);
-        //    NetworkServer.Spawn(playerSpawnSystemInstance);
-        //
-        //    GameObject roundSystemInstance = Instantiate(roundSystem);
-        //    NetworkServer.Spawn(roundSystemInstance);
-        //}
+        //watch for clients not being ready
+    }
+
+    public override void OnClientSceneChanged()
+    {
+        base.OnClientSceneChanged();    // Readies client here
+
+        if (SceneManager.GetActiveScene().name.StartsWith("Level"))
+        {
+            Spawner.Spawn();
+        }
+
     }
 
     public override void OnServerReady(NetworkConnectionToClient conn)
@@ -214,5 +236,87 @@ public class NetworkManagerCustom : NetworkManager
         base.OnServerReady(conn);
 
         OnServerReadied?.Invoke(conn);
+
+        //if (SceneManager.GetActiveScene().name.StartsWith("Level"))
+        //{
+        //    Debug.Log(GamePlayers.Count);
+        //    foreach (var player in GamePlayers)
+        //    {
+        //        if (player.connectionToClient.isReady == false)
+        //        {
+        //            Debug.Log(player.GetDisplayName() + " is not ready");
+        //            return;
+        //        }
+        //    }
+        //    Debug.Log("outside foreach");
+        //    Spawner.Spawn();
+        //}
+
     }
+
+    public override void OnValidate()
+    {
+        base.OnValidate();
+
+        if (m_shooterPrefab != null && !m_shooterPrefab.TryGetComponent(out NetworkIdentity _))
+        {
+            Debug.LogError("NetworkManager - Player Prefab must have a NetworkIdentity.");
+            m_shooterPrefab = null;
+        }
+        if (m_runnerPrefab != null && !m_runnerPrefab.TryGetComponent(out NetworkIdentity _))
+        {
+            Debug.LogError("NetworkManager - Player Prefab must have a NetworkIdentity.");
+            m_runnerPrefab = null;
+        }
+        if (m_mapPrefab != null && !m_mapPrefab.TryGetComponent(out NetworkIdentity _))
+        {
+            Debug.LogError("NetworkManager - Player Prefab must have a NetworkIdentity.");
+            m_mapPrefab = null;
+        }
+
+        if (m_shooterPrefab != null && spawnPrefabs.Contains(m_shooterPrefab))
+        {
+            Debug.LogWarning("NetworkManager - Player Prefab doesn't need to be in Spawnable Prefabs list too. Removing it.");
+            spawnPrefabs.Remove(m_shooterPrefab);
+        }
+        if (m_runnerPrefab != null && spawnPrefabs.Contains(m_runnerPrefab))
+        {
+            Debug.LogWarning("NetworkManager - Player Prefab doesn't need to be in Spawnable Prefabs list too. Removing it.");
+            spawnPrefabs.Remove(m_runnerPrefab);
+        }
+        if (m_mapPrefab != null && spawnPrefabs.Contains(m_mapPrefab))
+        {
+            Debug.LogWarning("NetworkManager - Player Prefab doesn't need to be in Spawnable Prefabs list too. Removing it.");
+            spawnPrefabs.Remove(m_mapPrefab);
+        }
+    }
+
+    GameObject SpawnLevel(SpawnMessage msg)
+    {
+        var level = Instantiate(m_mapPrefab, Spawner.transform);
+        Identifier.AssignAllIds(Spawner.transform);
+
+        return level;
+    }
+
+    public void UnSpawnLevel(GameObject spawned)
+    {
+        Destroy(spawned);
+    }
+    
+    public override void RegisterClientMessages()
+    {
+        base.RegisterClientMessages();
+
+        if (m_shooterPrefab != null)
+            NetworkClient.RegisterPrefab(m_shooterPrefab);
+        if (m_runnerPrefab != null)
+            NetworkClient.RegisterPrefab(m_runnerPrefab);
+        if (m_mapPrefab != null)
+        {
+            NetworkClient.RegisterPrefab(m_mapPrefab, SpawnLevel, UnSpawnLevel);
+        }
+    }
+
+
 }
