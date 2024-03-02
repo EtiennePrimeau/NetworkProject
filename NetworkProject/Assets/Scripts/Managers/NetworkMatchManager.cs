@@ -1,6 +1,7 @@
 using UnityEngine;
 using Mirror;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 public enum E_TriggerTypes
 {
@@ -34,6 +35,7 @@ public class NetworkMatchManager : NetworkBehaviour
         if (_Instance != null && _Instance != this)
         {
             Destroy(this);
+            return;
         }
         _Instance = this;
 
@@ -114,6 +116,7 @@ public class NetworkMatchManager : NetworkBehaviour
 
     public void SetConnectedPlayersList(List<NetworkGamePlayer> list)
     {
+        //Debug.Log("setting list");
         ConnectedPlayers = list;
     }
 
@@ -273,28 +276,23 @@ public class NetworkMatchManager : NetworkBehaviour
     public void CMD_ChangeArrows(bool shootingBomb, NetworkConnectionToClient player = null)
     {
 
+        foreach (var connPlayer in ConnectedPlayers)
+        {
+            if (connPlayer.GetPlayerType() == EPlayerType.Runner)
+            {
+                continue;
+            }
 
-        Debug.Log("In changeArrows : not refactored yet");
+            var manager = connPlayer.gameObject.GetComponentInChildren<NetworkLevelPlayerController>();
+            if (manager == null)
+            {
+                //Debug.Log("manager null");
+                continue;
+            }
+            //Debug.Log("calling rpc");
+            manager.TargetMovePlayerArrow(this.netIdentity.connectionToClient, connPlayer.GetIndex(), shootingBomb);
 
-        //int index = player.m_uiSlotIndex - 2;
-        //
-        //foreach (var connPlayer in ConnectedPlayers)
-        //{
-        //    if (connPlayer.m_tag == "Runner")
-        //    {
-        //
-        //        continue;
-        //    }
-        //
-        //    var manager = connPlayer.identity.gameObject.GetComponentInChildren<NetworkLevelPlayerController>();
-        //    if (manager == null)
-        //    {
-        //        //Debug.Log("manager null");
-        //        continue;
-        //    }
-        //    //Debug.Log("calling rpc");
-        //    manager.TargetMovePlayerArrow(this.netIdentity.connectionToClient, index, shootingBomb);
-        //}
+        }
     }
 }
 

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class NetworkGamePlayer : NetworkBehaviour
 {
+    public static int s_index = 0;
+    private int m_index;
     private EPlayerType m_playerType;
 
     [SyncVar]
@@ -41,6 +43,12 @@ public class NetworkGamePlayer : NetworkBehaviour
     public void SetPlayerType(EPlayerType type)
     {
         this.m_playerType = type;
+
+        if (type == EPlayerType.Shooter)
+        {
+            m_index = s_index;
+            s_index++;
+        }
     }
 
     public string GetDisplayName()
@@ -51,5 +59,10 @@ public class NetworkGamePlayer : NetworkBehaviour
     public EPlayerType GetPlayerType()
     {
         return m_playerType;
+    }
+
+    public int GetIndex()
+    {
+        return m_index;
     }
 }

@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class LocalLevelPlayerController : MonoBehaviour
 {
-    private NetworkPlatformManager m_platformController = null;
     private NetworkLevelPlayerController m_networkComponent;
 
     [SerializeField] private DisplayProjectileCooldown m_cooldownDisplay;
@@ -21,7 +20,6 @@ public class LocalLevelPlayerController : MonoBehaviour
     private float m_lerpedInputY;
 
     private bool m_inputPaused = false;
-    private bool m_controllingPlatform = false;
 
     private bool m_isInNonGameplay = true;
 
@@ -29,22 +27,6 @@ public class LocalLevelPlayerController : MonoBehaviour
     {
         m_cinematicCamera.enabled = true;
         m_camera.enabled = false;
-
-
-
-        var platformController = NetworkPlatformManager._Instance?.GetComponent<NetworkPlatformManager>();
-        if (platformController == null)
-        {
-            Debug.LogError("No platform controller in scene");
-            m_controllingPlatform = false;
-        }
-        else
-        {
-            m_networkComponent.SetPlatformController(platformController);
-            m_controllingPlatform = true;
-        }
-        
-
     }
 
     private void Update()
@@ -64,12 +46,6 @@ public class LocalLevelPlayerController : MonoBehaviour
             MoveHorizontally();
             MoveVertically();
         }
-
-        if (m_controllingPlatform)
-        {
-            SendInputsToNetworkComponent();
-        }
-
     }
 
     private void MoveHorizontally()
@@ -106,40 +82,6 @@ public class LocalLevelPlayerController : MonoBehaviour
 
         m_lerpedInputY = Mathf.Lerp(m_lerpedInputY, inputY, m_lerpF);
         m_go.transform.position += new Vector3(0, m_lerpedInputY, 0);
-    }
-
-    private void SendInputsToNetworkComponent()
-    {
-        //Debug.DrawRay(transform.position, transform.forward * 5, Color.red);
-
-        Vector3 localInput = GetLocalInput();
-
-        //Debug.DrawRay(transform.position + new Vector3(0, 1, 0), localInput * 5, Color.green);
-
-        //Debug.Log("send inputs from local");        
-        m_networkComponent.CMD_SendInputs(localInput);
-    }
-
-    private Vector3 GetLocalInput()
-    {
-        Vector3 localInput = Vector3.zero;
-
-        if (Input.GetKey(KeyCode.W))
-            localInput += m_camera.transform.forward;
-        if (Input.GetKey(KeyCode.S))
-            localInput -= m_camera.transform.forward;
-        if (Input.GetKey(KeyCode.D))
-            localInput += m_camera.transform.right;
-        if (Input.GetKey(KeyCode.A))
-            localInput -= m_camera.transform.right;
-
-        if (localInput == Vector3.zero)
-        {
-            //Debug.Log("Local Inputs = Zero");
-            return Vector3.zero;
-        }
-
-        return localInput;
     }
 
     public void SetCamera(Camera camera)

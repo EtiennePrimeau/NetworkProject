@@ -46,6 +46,24 @@ public class ShooterUIManager : NetworkBehaviour
             CMDMovePlayerArrow(index, selectingBomb);
         }
     }
+    //public void MovePlayerArrow(int index, bool selectingBomb)
+    //{
+    //    if (selectingBomb)
+    //    {
+    //        m_playerArrows[index].transform.localPosition = new Vector3(17.5f, 111, 0);
+    //    }
+    //    else
+    //    {
+    //        if (index == 0)
+    //        {
+    //            m_playerArrows[index].transform.localPosition = m_arrowOneInitialPosition;
+    //        }
+    //        else
+    //        {
+    //            m_playerArrows[index].transform.localPosition = m_arrowTwoInitialPosition;
+    //        }
+    //    }
+    //}
 
     [Command(requiresAuthority = false)]
     private void CMDMovePlayerArrow(int index, bool selectingBomb)
@@ -67,23 +85,4 @@ public class ShooterUIManager : NetworkBehaviour
         }
     }
 
-    //[ClientRpc]
-    public void RPCMovePlayerArrow(int index, bool selectingBomb)
-    {
-        if (selectingBomb)
-        {
-            m_playerArrows[index].transform.localPosition = new Vector3(17.5f, 111, 0);
-        }
-        else
-        {
-            if (index == 0)
-            {
-                m_playerArrows[index].transform.localPosition = m_arrowOneInitialPosition;
-            }
-            else
-            {
-                m_playerArrows[index].transform.localPosition = m_arrowTwoInitialPosition;
-            }
-        }
-    }
 }

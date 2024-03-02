@@ -2,6 +2,7 @@ using Mirror;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Networking.PlayerConnection;
 using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -243,13 +244,13 @@ public class NetworkManagerCustom : NetworkManager
            {
                if (player.connectionToClient.isReady == false)
                {
-                   Debug.Log(player.GetDisplayName() + " is not ready");
+                   //Debug.Log(player.GetDisplayName() + " is not ready");
                    return;
                }
-                Debug.Log(player.GetDisplayName() + " is ready");
+                //Debug.Log(player.GetDisplayName() + " is ready");
            }
-           Debug.Log("outside foreach");
-            MatchManager.SetConnectedPlayersList(GamePlayers);
+           //Debug.Log("outside foreach");
+           MatchManager.SetConnectedPlayersList(GamePlayers);
            MatchManager.LaunchGame();
        }
 
@@ -318,6 +319,4 @@ public class NetworkManagerCustom : NetworkManager
             NetworkClient.RegisterPrefab(m_mapPrefab, SpawnLevel, UnSpawnLevel);
         }
     }
-
-
 }
