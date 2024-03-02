@@ -24,7 +24,6 @@ public class LaunchCinematic : NetworkBehaviour
 
     private bool m_hasStarted = false;
 
-
     private void Start()
     {
         transform.position = m_startPosition;
@@ -33,11 +32,16 @@ public class LaunchCinematic : NetworkBehaviour
     [ClientRpc]
     public void RPC_Launch()
     {
+        if (!isLocalPlayer)
+        {
+            return;
+        }
         //Debug.Log("rpc_launch");
 
         m_timer = 0.0f;
         m_hasStarted = true;
     }
+
 
     private void FixedUpdate()
     {
@@ -107,12 +111,12 @@ public class LaunchCinematic : NetworkBehaviour
         }
     }
 
-    public void SetPlayer(GameObject go, bool isRunner)
-    {
-        m_player = go;
-        if (isRunner)
-            m_playerType = EPlayerType.Runner;
-        else
-            m_playerType = EPlayerType.Shooter;
-    }
+    //public void SetPlayer(GameObject go, bool isRunner)
+    //{
+    //    m_player = go;
+    //    if (isRunner)
+    //        m_playerType = EPlayerType.Runner;
+    //    else
+    //        m_playerType = EPlayerType.Shooter;
+    //}
 }

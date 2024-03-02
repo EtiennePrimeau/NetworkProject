@@ -13,7 +13,7 @@ public class NetworkMatchManager : NetworkBehaviour
 {
     public static NetworkMatchManager _Instance { get; private set; }
 
-    private List<NetworkConnectionToClient> ConnectedPlayers = new List<NetworkConnectionToClient>();
+    private List<NetworkGamePlayer> ConnectedPlayers = new List<NetworkGamePlayer>(); // previously List<NetworkConnectionToClient>
 
     [SerializeField] private float m_radius = 10.0f;
     [SerializeField] private float m_respawnHeight = 10.0f;
@@ -96,9 +96,13 @@ public class NetworkMatchManager : NetworkBehaviour
         //Debug.Log("Launching cinematic");
         foreach (var player in ConnectedPlayers)
         {
-            var cinematic = player.identity.gameObject.GetComponentInChildren<LaunchCinematic>();
-            //Debug.Log(player.m_name + " launched cinematic " + cinematic);
-            cinematic.RPC_Launch();
+            var cinematic = player.gameObject.GetComponentInChildren<LaunchCinematic>(); // previously player.identity.gameObject
+            //Debug.Log(player.GetDisplayName() + " is launching cinematic " + cinematic);
+            if (cinematic != null)
+            {
+                cinematic.RPC_Launch();
+        
+            }
         }
     }
 
@@ -108,7 +112,7 @@ public class NetworkMatchManager : NetworkBehaviour
         m_gameTimerHasStarted = true;
     }
 
-    public void SetConnectedPlayersList(List<NetworkConnectionToClient> list)
+    public void SetConnectedPlayersList(List<NetworkGamePlayer> list)
     {
         ConnectedPlayers = list;
     }
@@ -216,7 +220,7 @@ public class NetworkMatchManager : NetworkBehaviour
     {
         foreach (var connPlayer in ConnectedPlayers)
         {
-            var uiManager = connPlayer.identity.gameObject.GetComponentInChildren<UiWinLoseController>();
+            var uiManager = connPlayer.gameObject.GetComponentInChildren<UiWinLoseController>();
             //if (connPlayer.m_tag == "Runner" && uiManager != null)
             //{
             //    uiManager.RPC_EnableVictoryScreen();
@@ -225,7 +229,7 @@ public class NetworkMatchManager : NetworkBehaviour
             //{
             //    uiManager.RPC_EnableDefeatScreen();
             //}
-            var gamePlayer = connPlayer.identity.gameObject.GetComponentInChildren<NetworkGamePlayer>();
+            var gamePlayer = connPlayer.gameObject.GetComponentInChildren<NetworkGamePlayer>();
             if (uiManager != null && gamePlayer.GetPlayerType() == EPlayerType.Runner)
             {
                 uiManager.RPC_EnableVictoryScreen();
@@ -243,7 +247,7 @@ public class NetworkMatchManager : NetworkBehaviour
     {
         foreach (var connPlayer in ConnectedPlayers)
         {
-            var uiManager = connPlayer.identity.gameObject.GetComponentInChildren<UiWinLoseController>();
+            var uiManager = connPlayer.gameObject.GetComponentInChildren<UiWinLoseController>();
             //if (connPlayer.m_tag == "Shooter" && uiManager != null)
             //{
             //    uiManager.RPC_EnableVictoryScreen();
@@ -252,7 +256,7 @@ public class NetworkMatchManager : NetworkBehaviour
             //{
             //    uiManager.RPC_EnableDefeatScreen();
             //}
-            var gamePlayer = connPlayer.identity.gameObject.GetComponentInChildren<NetworkGamePlayer>();
+            var gamePlayer = connPlayer.gameObject.GetComponentInChildren<NetworkGamePlayer>();
             if (uiManager != null && gamePlayer.GetPlayerType() == EPlayerType.Shooter)
             {
                 uiManager.RPC_EnableVictoryScreen();

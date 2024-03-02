@@ -217,7 +217,7 @@ public class NetworkManagerCustom : NetworkManager
 
     public override void OnServerSceneChanged(string sceneName)
     {
-        //watch for clients not being ready
+        //watch out for clients not being ready
     }
 
     public override void OnClientSceneChanged()
@@ -237,20 +237,21 @@ public class NetworkManagerCustom : NetworkManager
 
         OnServerReadied?.Invoke(conn);
 
-        //if (SceneManager.GetActiveScene().name.StartsWith("Level"))
-        //{
-        //    Debug.Log(GamePlayers.Count);
-        //    foreach (var player in GamePlayers)
-        //    {
-        //        if (player.connectionToClient.isReady == false)
-        //        {
-        //            Debug.Log(player.GetDisplayName() + " is not ready");
-        //            return;
-        //        }
-        //    }
-        //    Debug.Log("outside foreach");
-        //    Spawner.Spawn();
-        //}
+       if (SceneManager.GetActiveScene().name == "Level_01")
+       {
+           foreach (var player in GamePlayers)
+           {
+               if (player.connectionToClient.isReady == false)
+               {
+                   Debug.Log(player.GetDisplayName() + " is not ready");
+                   return;
+               }
+                Debug.Log(player.GetDisplayName() + " is ready");
+           }
+           Debug.Log("outside foreach");
+            MatchManager.SetConnectedPlayersList(GamePlayers);
+           MatchManager.LaunchGame();
+       }
 
     }
 
