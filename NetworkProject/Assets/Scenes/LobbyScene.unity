@@ -1562,10 +1562,10 @@ MonoBehaviour:
   <Identifier>k__BackingField: {fileID: 862775112}
   <MatchManager>k__BackingField: {fileID: 862775111}
   <Spawner>k__BackingField: {fileID: 862775114}
-  roomPlayerPrefab: {fileID: 6205867618914317247, guid: 32ad89e75d824ab488a440acd88b0600, type: 3}
-  lobbyScene: Assets/Scenes/LobbyScene.unity
-  minPlayers: 2
-  gamePlayerPrefab: {fileID: -8810439575308168324, guid: 9bb5a6b3e42b3a34d9425db31507d849, type: 3}
+  m_roomPlayerPrefab: {fileID: 6205867618914317247, guid: 32ad89e75d824ab488a440acd88b0600, type: 3}
+  m_lobbyScene: Assets/Scenes/LobbyScene.unity
+  m_minPlayers: 2
+  m_gamePlayerPrefab: {fileID: -8810439575308168324, guid: 9bb5a6b3e42b3a34d9425db31507d849, type: 3}
   m_runnerPrefab: {fileID: 2096930612547086335, guid: d8bdaf1d71e46264bb75aa5e764b28ff, type: 3}
   m_shooterPrefab: {fileID: 8929833347540090403, guid: cb6272c282e142149892cc6f901ecf0c, type: 3}
   m_mapPrefab: {fileID: 1267137300523568382, guid: 0725ec95ff8b7c34c8cb342506ed17bb, type: 3}
@@ -2576,8 +2576,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50d13c745c94c354d9847b224394047f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  networkManager: {fileID: 862775108}
-  landingPagePanel: {fileID: 1044319874}
+  m_networkManager: {fileID: 862775108}
+  m_landingPagePanel: {fileID: 1129190979}
 --- !u!4 &1293099584
 Transform:
   m_ObjectHideFlags: 0
@@ -2646,10 +2646,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4da65655a13127a4aacaf44b78eb9e71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  networkManager: {fileID: 862775108}
-  landingPagePanel: {fileID: 1044319874}
-  ipAddressInputField: {fileID: 913589315}
-  joinButton: {fileID: 53373300}
+  m_networkManager: {fileID: 862775108}
+  m_landingPagePanel: {fileID: 1129190979}
+  m_ipAddressInputField: {fileID: 913589315}
+  m_joinButton: {fileID: 53373300}
 --- !u!114 &1384609045
 MonoBehaviour:
   m_ObjectHideFlags: 0

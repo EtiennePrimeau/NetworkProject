@@ -4,18 +4,18 @@ using UnityEngine.UI;
 
 public class JoinLobbyMenu : MonoBehaviour
 {
-    [SerializeField] private NetworkManagerCustom networkManager = null;
+    [SerializeField] private NetworkManagerCustom m_networkManager = null;
 
     [Header("UI")]
-    [SerializeField] private GameObject landingPagePanel = null;
-    [SerializeField] private TMP_InputField ipAddressInputField = null;
-    [SerializeField] private Button joinButton = null;
+    [SerializeField] private GameObject m_landingPagePanel = null;
+    [SerializeField] private TMP_InputField m_ipAddressInputField = null;
+    [SerializeField] private Button m_joinButton = null;
 
     private void OnEnable()
     {
         NetworkManagerCustom.OnClientConnected += HandleClientConnected;
         NetworkManagerCustom.OnClientDisconnected += HandleClientDisconnected;
-        ipAddressInputField.text = networkManager.networkAddress;
+        m_ipAddressInputField.text = m_networkManager.networkAddress;
     }
 
     private void OnDisable()
@@ -26,24 +26,24 @@ public class JoinLobbyMenu : MonoBehaviour
 
     public void JoinLobby()
     {
-        string ipAddress = ipAddressInputField.text;
+        string ipAddress = m_ipAddressInputField.text;
 
-        networkManager.networkAddress = ipAddress;
-        networkManager.StartClient();
+        m_networkManager.networkAddress = ipAddress;
+        m_networkManager.StartClient();
 
-        joinButton.interactable = false;
+        m_joinButton.interactable = false;
     }
 
     private void HandleClientConnected()
     {
-        joinButton.interactable = true;
+        m_joinButton.interactable = true;
 
         gameObject.SetActive(false);
-        landingPagePanel.SetActive(false);
+        m_landingPagePanel.SetActive(false);
     }
 
     private void HandleClientDisconnected()
     {
-        joinButton.interactable = true;
+        m_joinButton.interactable = true;
     }
 }

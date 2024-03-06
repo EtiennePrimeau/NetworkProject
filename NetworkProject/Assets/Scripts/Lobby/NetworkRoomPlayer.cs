@@ -6,11 +6,11 @@ using UnityEngine.UI;
 public class NetworkRoomPlayer : NetworkBehaviour
 {
     [Header("UI")]
-    [SerializeField] private GameObject lobbyUI = null; // on only if belongs to localPlayer
-    [SerializeField] private TMP_Text[] playerNameTexts = new TMP_Text[4];
-    [SerializeField] private TMP_Text[] playerTeamSelectionTexts = new TMP_Text[4];
-    [SerializeField] private TMP_Text[] playerReadyTexts = new TMP_Text[4];
-    [SerializeField] private Button startGameButton = null; // on only if Host
+    [SerializeField] private GameObject m_lobbyUI = null; // on only if belongs to localPlayer
+    [SerializeField] private TMP_Text[] m_playerNameTexts = new TMP_Text[4];
+    [SerializeField] private TMP_Text[] m_playerTeamSelectionTexts = new TMP_Text[4];
+    [SerializeField] private TMP_Text[] m_playerReadyTexts = new TMP_Text[4];
+    [SerializeField] private Button m_startGameButton = null; // on only if Host
     [SerializeField] private Button m_changeTeamButton = null; // interactable only if not ready
 
     [SyncVar(hook = nameof(HandleDisplayNameChanged))]
@@ -26,7 +26,7 @@ public class NetworkRoomPlayer : NetworkBehaviour
         set
         {
             isLeader = value;
-            startGameButton.gameObject.SetActive(value);
+            m_startGameButton.gameObject.SetActive(value);
         }
     }
 
@@ -44,7 +44,7 @@ public class NetworkRoomPlayer : NetworkBehaviour
     {
         CmdSetDisplayName(PlayerNameInput.DisplayName);
 
-        lobbyUI.SetActive(true);
+        m_lobbyUI.SetActive(true);
     }
 
     public override void OnStartClient()
@@ -81,18 +81,18 @@ public class NetworkRoomPlayer : NetworkBehaviour
             return;
         }
 
-        for (int i = 0; i < playerNameTexts.Length; i++)
+        for (int i = 0; i < m_playerNameTexts.Length; i++)
         {
-            playerNameTexts[i].text = "Waiting For Player...";
-            playerTeamSelectionTexts[i].text = string.Empty;
-            playerReadyTexts[i].text = string.Empty;
+            m_playerNameTexts[i].text = "Waiting For Player...";
+            m_playerTeamSelectionTexts[i].text = string.Empty;
+            m_playerReadyTexts[i].text = string.Empty;
         }
 
         for (int i = 0; i < Room.RoomPlayers.Count; i++)
         {
-            playerNameTexts[i].text = Room.RoomPlayers[i].DisplayName;
-            playerTeamSelectionTexts[i].text = Room.RoomPlayers[i].PlayerType.ToString();
-            playerReadyTexts[i].text = Room.RoomPlayers[i].IsReady ?
+            m_playerNameTexts[i].text = Room.RoomPlayers[i].DisplayName;
+            m_playerTeamSelectionTexts[i].text = Room.RoomPlayers[i].PlayerType.ToString();
+            m_playerReadyTexts[i].text = Room.RoomPlayers[i].IsReady ?
                 "<color=green>Ready</color>" :
                 "<color=red>Not Ready</color>";
         }
@@ -102,7 +102,7 @@ public class NetworkRoomPlayer : NetworkBehaviour
     {
         if (!isLeader) { return; }
 
-        startGameButton.interactable = readyToStart;
+        m_startGameButton.interactable = readyToStart;
     }
 
     [Command]

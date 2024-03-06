@@ -30,12 +30,12 @@ public class NetworkManagerCustom : NetworkManager
     [field:SerializeField] public NetworkSpawner Spawner { get; private set; }
 
     [Header("Lobby")]
-    [SerializeField] private NetworkRoomPlayer roomPlayerPrefab = null;
-    [Scene][SerializeField] private string lobbyScene = string.Empty; // must use ActiveScene().path
-    [SerializeField] private int minPlayers = 2;
+    [SerializeField] private NetworkRoomPlayer m_roomPlayerPrefab = null;
+    [Scene][SerializeField] private string m_lobbyScene = string.Empty; // must use ActiveScene().path
+    [SerializeField] private int m_minPlayers = 2;
 
     [Header("Game")]
-    [SerializeField] private NetworkGamePlayer gamePlayerPrefab = null;
+    [SerializeField] private NetworkGamePlayer m_gamePlayerPrefab = null;
     [SerializeField] private GameObject m_runnerPrefab;
     [SerializeField] private GameObject m_shooterPrefab;
     //[SerializeField] private GameObject playerSpawnSystem = null;
@@ -86,7 +86,7 @@ public class NetworkManagerCustom : NetworkManager
             return;
         }
 
-        if (SceneManager.GetActiveScene().path != lobbyScene) //stops players joining while in-game
+        if (SceneManager.GetActiveScene().path != m_lobbyScene) //stops players joining while in-game
         {
             conn.Disconnect();
             return;
@@ -95,7 +95,8 @@ public class NetworkManagerCustom : NetworkManager
 
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
     {
-        if (SceneManager.GetActiveScene().path == lobbyScene)
+        Debug.Log("onserveraddplayer");
+        if (SceneManager.GetActiveScene().path == m_lobbyScene)
         {
             bool isLeader = false;
             if (RoomPlayers.Count == 0)
@@ -103,7 +104,7 @@ public class NetworkManagerCustom : NetworkManager
                 isLeader = true;
             }
 
-            NetworkRoomPlayer roomPlayerInstance = Instantiate(roomPlayerPrefab);
+            NetworkRoomPlayer roomPlayerInstance = Instantiate(m_roomPlayerPrefab);
 
             roomPlayerInstance.IsLeader = isLeader;
 
@@ -143,7 +144,7 @@ public class NetworkManagerCustom : NetworkManager
 
     private bool IsReadyToStart()
     {
-        if (numPlayers < minPlayers) { return false; }
+        if (numPlayers < m_minPlayers) { return false; }
 
         int runnerTeam = 0;
         int shooterTeam = 0;
@@ -169,7 +170,7 @@ public class NetworkManagerCustom : NetworkManager
         //
         //}
         
-        if (SceneManager.GetActiveScene().path == lobbyScene)
+        if (SceneManager.GetActiveScene().path == m_lobbyScene)
         {
             if (!IsReadyToStart()) { return; }
         
@@ -182,7 +183,7 @@ public class NetworkManagerCustom : NetworkManager
     public override void ServerChangeScene(string newSceneName)
     {
         // From menu to game
-        if (SceneManager.GetActiveScene().path == lobbyScene && newSceneName.StartsWith("Level"))
+        if (SceneManager.GetActiveScene().path == m_lobbyScene && newSceneName.StartsWith("Level"))
         {
             //for (int i = RoomPlayers.Count - 1; i >= 0; i--)
             //{

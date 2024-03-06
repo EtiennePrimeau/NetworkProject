@@ -1,6 +1,6 @@
 using Mirror;
 //using System.Diagnostics;
-using UnityEngine;
+//using UnityEngine;
 
 public class NetworkGamePlayer : NetworkBehaviour
 {
@@ -9,7 +9,7 @@ public class NetworkGamePlayer : NetworkBehaviour
     private EPlayerType m_playerType;
 
     [SyncVar]
-    private string displayName = "Loading...";
+    private string m_displayName = "Loading...";
 
     private NetworkManagerCustom room;
     private NetworkManagerCustom Room
@@ -36,7 +36,7 @@ public class NetworkGamePlayer : NetworkBehaviour
     [Server]
     public void SetDisplayName(string displayName)
     {
-        this.displayName = displayName;
+        this.m_displayName = displayName;
     }
 
     [Server]
@@ -53,7 +53,7 @@ public class NetworkGamePlayer : NetworkBehaviour
 
     public string GetDisplayName()
     {
-        return displayName;
+        return m_displayName;
     }
     
     public EPlayerType GetPlayerType()

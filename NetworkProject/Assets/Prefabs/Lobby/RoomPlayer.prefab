@@ -1456,23 +1456,23 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  lobbyUI: {fileID: 1740352636610910600}
-  playerNameTexts:
+  m_lobbyUI: {fileID: 1740352636610910600}
+  m_playerNameTexts:
   - {fileID: 2763943709532201371}
   - {fileID: 622876040150613138}
   - {fileID: 8344606430743288133}
   - {fileID: 3002794872780138771}
-  playerTeamSelectionTexts:
+  m_playerTeamSelectionTexts:
   - {fileID: 6861693669697835873}
   - {fileID: 8161715012870438534}
   - {fileID: 2051306193349900738}
   - {fileID: 8365285961002850554}
-  playerReadyTexts:
+  m_playerReadyTexts:
   - {fileID: 1921775122642251115}
   - {fileID: 4542386388594926350}
   - {fileID: 5853946469186455535}
   - {fileID: 7029970200648692458}
-  startGameButton: {fileID: 4206123738396643685}
+  m_startGameButton: {fileID: 4206123738396643685}
   m_changeTeamButton: {fileID: 2741348924750348521}
   DisplayName: Loading...
   IsReady: 0
