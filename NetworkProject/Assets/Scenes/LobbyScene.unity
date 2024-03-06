@@ -1732,9 +1732,9 @@ MonoBehaviour:
   wrap: {fileID: 862775109}
   jitter: 0.02
   jitterSpeed: 1
-  reliableLatency: 100
+  reliableLatency: 70
   unreliableLoss: 2
-  unreliableLatency: 100
+  unreliableLatency: 70
   unreliableScramble: 2
 --- !u!1 &913589313
 GameObject:

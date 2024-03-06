@@ -18,7 +18,7 @@ public class RotatingArmAddForce : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         var runner = other.gameObject.GetComponentInChildren<RunnerSM>();
-        Debug.Log(other.gameObject.name);
+        //Debug.Log("Arm hit: " + other.gameObject.name);
         if (runner != null)
         {
             //Debug.Log("addforce");

@@ -1,6 +1,7 @@
 using Mirror;
 //using System.Diagnostics;
-//using UnityEngine;
+//using System.Diagnostics;
+using UnityEngine;
 
 public class NetworkGamePlayer : NetworkBehaviour
 {
@@ -11,26 +12,27 @@ public class NetworkGamePlayer : NetworkBehaviour
     [SyncVar]
     private string m_displayName = "Loading...";
 
-    private NetworkManagerCustom room;
-    private NetworkManagerCustom Room
+    private NetworkManagerCustom manager;
+    private NetworkManagerCustom Manager
     {
         get
         {
-            if (room != null) { return room; }
-            return room = NetworkManager.singleton as NetworkManagerCustom;
+            if (manager != null) { return manager; }
+            return manager = NetworkManager.singleton as NetworkManagerCustom;
         }
     }
-
+    private void Awake()
+    {
+        Manager.GamePlayers.Add(this);
+    }
     public override void OnStartClient()
     {
         DontDestroyOnLoad(gameObject);
-
-        Room.GamePlayers.Add(this);
     }
 
     public override void OnStopClient()
     {
-        Room.GamePlayers.Remove(this);
+        Manager.GamePlayers.Remove(this);
     }
 
     [Server]

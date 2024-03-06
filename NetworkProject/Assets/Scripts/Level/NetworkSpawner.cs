@@ -1,4 +1,5 @@
 using Mirror;
+using System;
 using UnityEngine;
 
 public class NetworkSpawner : NetworkBehaviour
@@ -106,6 +107,8 @@ public class NetworkSpawner : NetworkBehaviour
 
         if (m_spawnPlatform)
         {
+            Debug.Log("Instantiated at " + DateTime.Now.TimeOfDay);
+            
             GameObject platformInstance = Instantiate(m_platformPrefab, transform);
             NetworkServer.Spawn(platformInstance);
 

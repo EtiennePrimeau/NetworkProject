@@ -162,19 +162,10 @@ public class NetworkManagerCustom : NetworkManager
 
     public void StartGame()
     {
-        //Debug.Log("Starting game // change scene");
-        //foreach (var player in RoomPlayers)
-        //{
-        //    Debug.Log(player.DisplayName + " has joined in team " + player.PlayerType);
-        //
-        //}
-        
         if (SceneManager.GetActiveScene().path == m_lobbyScene)
         {
             if (!IsReadyToStart()) { return; }
-        
-            //mapHandler = new MapHandler(mapSet, numberOfRounds);
-        
+
             ServerChangeScene("Level_01");
         }
     }
@@ -182,85 +173,91 @@ public class NetworkManagerCustom : NetworkManager
     public override void ServerChangeScene(string newSceneName)
     {
         // From menu to game
-        if (SceneManager.GetActiveScene().path == m_lobbyScene && newSceneName.StartsWith("Level"))
-        {
-            //for (int i = RoomPlayers.Count - 1; i >= 0; i--)
-            //{
-            //    var conn = RoomPlayers[i].connectionToClient;
-            //    var gameplayerInstance = Instantiate(gamePlayerPrefab);
-            //    gameplayerInstance.SetDisplayName(RoomPlayers[i].DisplayName);
-            //    gameplayerInstance.SetPlayerType(RoomPlayers[i].PlayerType);
-            //
-            //    NetworkServer.Destroy(conn.identity.gameObject);
-            //
-            //    NetworkServer.ReplacePlayerForConnection(conn, gameplayerInstance.gameObject);
-            //}
-            for (int i = RoomPlayers.Count - 1; i >= 0; i--)
-            {
-                GameObject playerInstance;
-                if (RoomPlayers[i].PlayerType == EPlayerType.Runner)
-                {
-                    playerInstance = Instantiate(m_runnerPrefab);
-                }
-                else
-                {
-                    playerInstance = Instantiate(m_shooterPrefab);
-                }
-
-                NetworkGamePlayer playerInfos = playerInstance.GetComponent<NetworkGamePlayer>();
-                playerInfos.SetDisplayName(RoomPlayers[i].DisplayName);
-                playerInfos.SetPlayerType(RoomPlayers[i].PlayerType);
-
-                var conn = RoomPlayers[i].connectionToClient;
-                NetworkServer.Destroy(conn.identity.gameObject);
-
-                NetworkServer.ReplacePlayerForConnection(conn, playerInstance);
-            }
-        }
+        //if (SceneManager.GetActiveScene().path == m_lobbyScene && newSceneName.StartsWith("Level"))
+        //{
+        //}
 
         base.ServerChangeScene(newSceneName);
+    }
 
+    private void SwitchRoomPlayersToGamePlayers()
+    {
+        for (int i = RoomPlayers.Count - 1; i >= 0; i--)
+        {
+            GameObject playerInstance;
+            if (RoomPlayers[i].PlayerType == EPlayerType.Runner)
+            {
+                playerInstance = Instantiate(m_runnerPrefab);
+            }
+            else
+            {
+                playerInstance = Instantiate(m_shooterPrefab);
+            }
 
+            NetworkGamePlayer playerInfos = playerInstance.GetComponent<NetworkGamePlayer>();
+            playerInfos.SetDisplayName(RoomPlayers[i].DisplayName);
+            playerInfos.SetPlayerType(RoomPlayers[i].PlayerType);
+
+            var conn = RoomPlayers[i].connectionToClient;
+            NetworkServer.Destroy(conn.identity.gameObject);
+            NetworkServer.ReplacePlayerForConnection(conn, playerInstance);
+        }
     }
 
     public override void OnServerSceneChanged(string sceneName)
     {
+        //Debug.Log("OnServerSceneChanged");
+
         //watch out for clients not being ready
     }
 
     public override void OnClientSceneChanged()
     {
+        //Debug.Log("OnClientSceneChanged");
+        
         base.OnClientSceneChanged();    // Readies client here
 
         if (SceneManager.GetActiveScene().name.StartsWith("Level"))
         {
             Spawner.Spawn();
+
+            //SwitchRoomPlayersToGamePlayers();
         }
 
     }
 
     public override void OnServerReady(NetworkConnectionToClient conn)
     {
+        //Debug.Log("OnServerReady");
+        
         base.OnServerReady(conn);
 
         OnServerReadied?.Invoke(conn);
 
-       if (SceneManager.GetActiveScene().name == "Level_01")
-       {
-           foreach (var player in GamePlayers)
-           {
-               if (player.connectionToClient.isReady == false)
-               {
-                   //Debug.Log(player.GetDisplayName() + " is not ready");
-                   return;
-               }
-                //Debug.Log(player.GetDisplayName() + " is ready");
-           }
-           //Debug.Log("outside foreach");
-           MatchManager.SetConnectedPlayersList(GamePlayers);
-           MatchManager.LaunchGame();
-       }
+        if (SceneManager.GetActiveScene().name == "Level_01")
+        {
+            if (!AllPlayersAreReady()) { return; }
 
+            SwitchRoomPlayersToGamePlayers();
+
+            MatchManager.SetConnectedPlayersList(GamePlayers);
+            MatchManager.LaunchGame();
+        }
+
+    }
+
+    private bool AllPlayersAreReady()
+    {
+        foreach (var player in RoomPlayers)
+        {
+            if (!player.connectionToClient.isReady)
+            {
+                //Debug.Log(player.DisplayName + " is not ready");
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public override void OnValidate()
@@ -302,6 +299,8 @@ public class NetworkManagerCustom : NetworkManager
 
     GameObject SpawnLevel(SpawnMessage msg)
     {
+        Debug.Log("Spawned at " + DateTime.Now.TimeOfDay);
+        
         var level = Instantiate(m_mapPrefab, Spawner.transform);
         Identifier.AssignAllIds(Spawner.transform);
 

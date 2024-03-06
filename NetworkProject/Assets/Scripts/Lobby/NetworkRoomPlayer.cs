@@ -49,6 +49,8 @@ public class NetworkRoomPlayer : NetworkBehaviour
 
     public override void OnStartClient()
     {
+        DontDestroyOnLoad(gameObject);
+        
         Room.RoomPlayers.Add(this);
 
         UpdateDisplay();
