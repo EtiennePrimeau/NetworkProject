@@ -95,7 +95,6 @@ public class NetworkManagerCustom : NetworkManager
 
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
     {
-        Debug.Log("onserveraddplayer");
         if (SceneManager.GetActiveScene().path == m_lobbyScene)
         {
             bool isLeader = false;
