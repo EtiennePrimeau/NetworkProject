@@ -1475,8 +1475,8 @@ MonoBehaviour:
   m_startGameButton: {fileID: 4206123738396643685}
   m_changeTeamButton: {fileID: 2741348924750348521}
   DisplayName: Loading...
-  IsReady: 0
   PlayerType: 0
+  IsReady: 0
 --- !u!1 &4780957580185106326
 GameObject:
   m_ObjectHideFlags: 0

@@ -15,10 +15,10 @@ public class NetworkRoomPlayer : NetworkBehaviour
 
     [SyncVar(hook = nameof(HandleDisplayNameChanged))]
     public string DisplayName = "Loading...";
-    [SyncVar(hook = nameof(HandleReadyStatusChanged))]
-    public bool IsReady = false;
     [SyncVar(hook = nameof(HandleTeamSelectionChanged))]
     public EPlayerType PlayerType;
+    [SyncVar(hook = nameof(HandleReadyStatusChanged))]
+    public bool IsReady = false;
 
     private bool isLeader;
     public bool IsLeader
@@ -63,7 +63,12 @@ public class NetworkRoomPlayer : NetworkBehaviour
         UpdateDisplay();
     }
 
-    public void HandleReadyStatusChanged(bool oldValue, bool newValue) => UpdateDisplay();
+    //public void HandleReadyStatusChanged(bool oldValue, bool newValue) => UpdateDisplay();
+    public void HandleReadyStatusChanged(bool oldValue, bool newValue)
+    {
+        UpdateDisplay();
+        HandleChangeTeamButton();
+    }
     public void HandleDisplayNameChanged(string oldValue, string newValue) => UpdateDisplay();
     public void HandleTeamSelectionChanged(EPlayerType oldValue, EPlayerType newValue) => UpdateDisplay();
 
@@ -118,9 +123,16 @@ public class NetworkRoomPlayer : NetworkBehaviour
     {
         IsReady = !IsReady;
 
-        m_changeTeamButton.interactable = !IsReady; // only works on host (new function not command?)
+        //m_changeTeamButton.interactable = !IsReady; // only works on host (new function not command?)
+        //HandleChangeTeamButton();
 
         Room.NotifyPlayersOfReadyState();
+    }
+
+    public void HandleChangeTeamButton()    // desynced
+    {
+        Debug.Log("ready = " + IsReady);
+        m_changeTeamButton.interactable = !IsReady;
     }
 
     [Command]
