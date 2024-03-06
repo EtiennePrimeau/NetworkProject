@@ -7,11 +7,11 @@ Original project is here:
 https://github.com/AhmattoGitHub/TP2_Reseau_Engin2
 
 What's new:
-Lobby system and connection to a game
-Starting game/Switching scenes logic
+Lobby system and connection to a game, 
+Starting game/Switching scenes logic, 
 Better synchronicity
 
 What's next:
-New map
-Redesigning Shooter players
+New map, 
+Redesigning Shooter players, 
 Improving Runner players gameplay
