@@ -145,10 +145,17 @@ public class NetworkManagerCustom : NetworkManager
     {
         if (numPlayers < minPlayers) { return false; }
 
+        int runnerTeam = 0;
+        int shooterTeam = 0;
         foreach (var player in RoomPlayers)
         {
             if (!player.IsReady) { return false; }
+
+            if (player.PlayerType == EPlayerType.Runner) { runnerTeam++; }
+            if (player.PlayerType == EPlayerType.Shooter) { shooterTeam++; }
         }
+
+        if (runnerTeam == 0 || shooterTeam == 0) { return false; }
 
         return true;
     }
