@@ -53,7 +53,7 @@ public class RunnerSM : CC_BaseStateMachine<CharacterState>
     protected override void CreatePossibleStates()
     {
         m_possibleStates = new List<CharacterState>();
-        m_possibleStates.Add(new NoGameplayState());
+        //m_possibleStates.Add(new NoGameplayState());  // removed for Phase1
         m_possibleStates.Add(new FreeState());
         m_possibleStates.Add(new JumpState());
     }
@@ -136,10 +136,10 @@ public class RunnerSM : CC_BaseStateMachine<CharacterState>
     private void RotatePlayer()
     {
 
-        if (IsInNonGameplay)
-        {
-            return;
-        }
+        //if (IsInNonGameplay)  // removed for Phase1
+        //{
+        //    return;
+        //}
 
         float currentAngleX = Input.GetAxis("Mouse X") * RotationSpeed;
         m_lerpedAngleX = Mathf.Lerp(m_lerpedAngleX, currentAngleX, 0.1f);

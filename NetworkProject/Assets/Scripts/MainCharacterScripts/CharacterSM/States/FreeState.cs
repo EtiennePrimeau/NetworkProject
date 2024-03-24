@@ -8,7 +8,7 @@ public class FreeState : CharacterState
 
     public override void OnEnter()
     {
-        //Debug.Log("Entering FreeState");
+        Debug.Log("Entering FreeState");
     }
 
     public override void OnFixedUpdate()
@@ -267,7 +267,7 @@ public class FreeState : CharacterState
 
     public override void OnExit()
     {
-        //Debug.Log("Exiting FreeState");
+        Debug.Log("Exiting FreeState");
     }
 
     public override bool CanEnter(CC_IState currentState)

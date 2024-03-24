@@ -23,7 +23,7 @@ public class NetworkGamePlayer : NetworkBehaviour
     }
     private void Awake()
     {
-        Manager.GamePlayers.Add(this);
+        //Manager.GamePlayers.Add(this);    // removed for Phase1
     }
     public override void OnStartClient()
     {
@@ -32,7 +32,7 @@ public class NetworkGamePlayer : NetworkBehaviour
 
     public override void OnStopClient()
     {
-        Manager.GamePlayers.Remove(this);
+        //Manager.GamePlayers.Remove(this); // removed for Phase1
     }
 
     [Server]

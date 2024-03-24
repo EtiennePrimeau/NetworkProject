@@ -19,7 +19,7 @@ public class SpawnLocalPlayer : NetworkBehaviour
 
     private void Start()
     {
-        NetworkManagerCustom.Instance.Identifier.AssignSingleId(transform);
+        //NetworkManagerCustom.Instance.Identifier.AssignSingleId(transform);   // removed for Phase1
         
         if (!isLocalPlayer)
         {
